@@ -9,3 +9,8 @@ def load_json(schema: Schema) -> dict[str, Any]:
     so the client gets field-level "required" errors instead of a generic 400."""
     payload = request.get_json(silent=True)
     return schema.load(payload if payload is not None else {})
+
+
+def load_query(schema: Schema) -> dict[str, Any]:
+    """Validate query-string parameters."""
+    return schema.load(request.args.to_dict())

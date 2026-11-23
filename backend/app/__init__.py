@@ -9,6 +9,7 @@ from flask import Flask
 from app.config import CONFIGS, BaseConfig
 from app.extensions import db, jwt, limiter, migrate
 from app.routes.auth_routes import auth_bp
+from app.routes.file_routes import files_bp
 from app.routes.health_routes import health_bp
 from app.services.email_service import init_email
 from app.utils.errors import register_error_handlers
@@ -41,6 +42,7 @@ def create_app(
     register_error_handlers(app)
     app.register_blueprint(health_bp)
     app.register_blueprint(auth_bp)
+    app.register_blueprint(files_bp)
 
     # Import models so Flask-Migrate can see them when generating migrations.
     from app import models  # noqa: F401

@@ -62,6 +62,13 @@ class ConflictError(AppError):
     code = "conflict"
 
 
+class StorageError(AppError):
+    """S3 failed or is misconfigured (bad credentials, missing bucket, ...)."""
+
+    status_code = 502
+    code = "storage_error"
+
+
 def error_response(
     status_code: int, code: str, message: str, details: dict[str, Any] | None = None
 ) -> tuple[Response, int]:

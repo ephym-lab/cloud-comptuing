@@ -21,6 +21,11 @@ def _env_int(name: str, default: int) -> int:
     return int(os.getenv(name, str(default)))
 
 
+def _env_list(name: str) -> tuple[str, ...]:
+    raw = os.getenv(name, "")
+    return tuple(item.strip().lower() for item in raw.split(",") if item.strip())
+
+
 class BaseConfig:
     SECRET_KEY = os.getenv("SECRET_KEY", "")
     TESTING = False
@@ -56,6 +61,8 @@ class BaseConfig:
     PRESIGNED_POST_EXPIRY_SECONDS = 5 * 60
     SHARE_LINK_MAX_MINUTES = 60
     MAX_UPLOAD_MB = _env_int("MAX_UPLOAD_MB", 100)
+    # Comma-separated extensions to allow (e.g. "mp4,png,pdf"). Empty = full built-in allowlist.
+    ALLOWED_EXTENSIONS = _env_list("ALLOWED_EXTENSIONS")
 
     # --- Email (Gmail SMTP) ---
     MAIL_SERVER = os.getenv("MAIL_SERVER", "smtp.gmail.com")

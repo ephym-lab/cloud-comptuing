@@ -9,7 +9,6 @@ from flask import Blueprint, Response, current_app, jsonify
 from flask_jwt_extended import (
     create_access_token,
     create_refresh_token,
-    get_jwt_identity,
     jwt_required,
     set_access_cookies,
     set_refresh_cookies,
@@ -18,6 +17,7 @@ from flask_jwt_extended import (
 
 from app.extensions import limiter
 from app.models import User
+from app.routes import current_user
 from app.schemas import load_json
 from app.schemas.auth_schemas import (
     EmailSchema,
@@ -82,7 +82,7 @@ def login():
 @auth_bp.post("/refresh")
 @jwt_required(refresh=True)
 def refresh():
-    user = AuthService().get_user(get_jwt_identity())
+    user = current_user()
     response = jsonify(user=user_schema.dump(user))
     set_access_cookies(response, create_access_token(identity=str(user.id)))
     return response
@@ -98,7 +98,7 @@ def logout():
 @auth_bp.get("/me")
 @jwt_required()
 def me():
-    user = AuthService().get_user(get_jwt_identity())
+    user = current_user()
     return jsonify(user=user_schema.dump(user))
 
 
