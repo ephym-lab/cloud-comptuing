@@ -5,6 +5,7 @@ import os
 from typing import Any
 
 from flask import Flask
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 from app.config import CONFIGS, BaseConfig
 from app.extensions import db, jwt, limiter, migrate
@@ -32,6 +33,7 @@ def create_app(
     app.config.update(config_overrides or {})
     _check_required_settings(app, config_class)
     _configure_logging(app)
+    _trust_reverse_proxy(app)
 
     db.init_app(app)
     migrate.init_app(app, db)
@@ -56,6 +58,13 @@ def _check_required_settings(app: Flask, config_class: type[BaseConfig]) -> None
     missing = [name for name in config_class.REQUIRED_SETTINGS if not app.config.get(name)]
     if missing:
         raise RuntimeError(f"Missing required settings: {', '.join(missing)}")
+
+
+def _trust_reverse_proxy(app: Flask) -> None:
+    """Behind the Next.js proxy, use X-Forwarded-For as the client IP (for rate limits)."""
+    count = app.config["TRUSTED_PROXY_COUNT"]
+    if count > 0:
+        app.wsgi_app = ProxyFix(app.wsgi_app, x_for=count)  # type: ignore[method-assign]
 
 
 def _configure_logging(app: Flask) -> None:

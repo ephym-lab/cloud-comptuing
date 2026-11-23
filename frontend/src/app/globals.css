@@ -1,0 +1,74 @@
+@import "tailwindcss";
+
+/*
+ * "Claim ticket" tokens. Light only: the app is projected in lit rooms.
+ *   paper  – page background        ink   – text, primary actions
+ *   tag    – anything that expires  steel – secondary text
+ *   line   – borders, dividers      alert – errors, destructive actions
+ */
+@theme {
+  --color-paper: #f5f7fa;
+  --color-ink: #14213d;
+  --color-tag: #f2c230;
+  --color-tag-soft: #fcf0c4;
+  --color-steel: #5b6b82;
+  --color-line: #d9dee7;
+  --color-alert: #c8372d;
+  --color-alert-soft: #fbe8e6;
+  --color-ok: #1f7a4d;
+  --color-ok-soft: #e3f2ea;
+
+  --font-sans: var(--font-schibsted), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, "SFMono-Regular", monospace;
+
+  --animate-chip-in: chip-in 420ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+@keyframes chip-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@layer base {
+  html {
+    color-scheme: light;
+  }
+
+  body {
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 1.0625rem;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3 {
+    line-height: 1.15;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--color-ink);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-delay: 0ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}

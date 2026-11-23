@@ -49,6 +49,11 @@ class BaseConfig:
     VERIFY_EMAIL_TOKEN_TTL = timedelta(hours=24)
     RESET_PASSWORD_TOKEN_TTL = timedelta(minutes=30)
 
+    # --- Reverse proxy ---
+    # Number of proxies in front of Flask that append X-Forwarded-For (the Next.js server
+    # in Docker = 1). Keep 0 when Flask is reached directly, or clients could spoof their IP.
+    TRUSTED_PROXY_COUNT = _env_int("TRUSTED_PROXY_COUNT", 0)
+
     # --- Rate limiting ---
     RATELIMIT_STORAGE_URI = os.getenv("RATELIMIT_STORAGE_URI", "memory://")
     RATELIMIT_ENABLED = True

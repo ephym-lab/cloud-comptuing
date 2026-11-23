@@ -26,3 +26,16 @@ def test_unknown_route_uses_json_error_shape(client):
     body = response.get_json()
     assert body["error"]["code"] == "not_found"
     assert set(body["error"]) == {"code", "message", "details"}
+
+
+def test_proxy_fix_uses_forwarded_client_ip():
+    from flask import request
+
+    from app import create_app
+
+    app = create_app("testing", {"TRUSTED_PROXY_COUNT": 1})
+    app.add_url_rule("/_ip", "ip", lambda: request.remote_addr or "")
+
+    response = app.test_client().get("/_ip", headers={"X-Forwarded-For": "203.0.113.7"})
+
+    assert response.get_data(as_text=True) == "203.0.113.7"
