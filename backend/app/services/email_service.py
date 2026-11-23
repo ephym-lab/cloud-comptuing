@@ -44,7 +44,7 @@ class SmtpEmailSender:
     username: str
     password: str
     default_sender: str
-    timeout_seconds: int = 10
+    timeout_seconds: int = 30
 
     def send(self, email: OutgoingEmail) -> None:
         message = EmailMessage()

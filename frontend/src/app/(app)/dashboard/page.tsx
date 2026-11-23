@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 
-import { DashboardPlaceholder } from "@/components/DashboardPlaceholder";
+import { FilesDashboard } from "@/components/files/FilesDashboard";
 
 export const metadata: Metadata = { title: "Your files" };
 
 export default function DashboardPage() {
-  return <DashboardPlaceholder />;
+  return <FilesDashboard />;
 }

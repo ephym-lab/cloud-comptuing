@@ -1,5 +1,5 @@
 -r requirements.txt
 pytest==9.2.0
-moto[s3]==5.2.5
+moto[s3,server]==5.2.5  # "server" = optional local S3 emulator (moto_server)
 ruff==0.17.6
 requests==2.34.2

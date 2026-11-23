@@ -57,13 +57,17 @@ def _get_s3_client() -> Any:
         region = current_app.config["AWS_REGION"]
         if not region or not current_app.config["S3_BUCKET_NAME"]:
             raise StorageError("S3 is not configured: set AWS_REGION and S3_BUCKET_NAME.")
+        custom_endpoint = current_app.config["S3_ENDPOINT_URL"]
         client = boto3.client(
             "s3",
             region_name=region,
-            # Regional endpoint + virtual-hosted URLs avoid redirects (and CORS failures)
-            # for buckets outside us-east-1.
-            endpoint_url=f"https://s3.{region}.amazonaws.com",
-            config=Config(signature_version="s3v4", s3={"addressing_style": "virtual"}),
+            # Real AWS: regional endpoint + virtual-hosted URLs avoid redirects (and CORS
+            # failures) for buckets outside us-east-1. A local emulator needs path-style URLs.
+            endpoint_url=custom_endpoint or f"https://s3.{region}.amazonaws.com",
+            config=Config(
+                signature_version="s3v4",
+                s3={"addressing_style": "path" if custom_endpoint else "virtual"},
+            ),
         )
         current_app.extensions[EXTENSION_KEY] = client
     return client
@@ -149,6 +153,9 @@ class StorageService:
 
     def direct_url(self, key: str) -> str:
         """The plain, unsigned object URL. On a private bucket this returns Access Denied."""
+        custom_endpoint = current_app.config["S3_ENDPOINT_URL"]
+        if custom_endpoint:
+            return f"{custom_endpoint.rstrip('/')}/{self._bucket}/{quote(key)}"
         region = current_app.config["AWS_REGION"]
         return f"https://{self._bucket}.s3.{region}.amazonaws.com/{quote(key)}"
 

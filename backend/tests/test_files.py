@@ -490,3 +490,12 @@ def test_listing_works_without_s3_configured(app, auth_client):
     response = request_upload(auth_client)
     assert response.status_code == 502
     assert "not configured" in response.get_json()["error"]["message"]
+
+
+def test_direct_url_uses_custom_endpoint_for_local_emulator(app, auth_client, s3):
+    body = upload(auth_client)
+    app.config["S3_ENDPOINT_URL"] = "http://localhost:5001/"
+
+    url = auth_client.get(f"/api/files/{body['file']['id']}/direct-url").get_json()["url"]
+
+    assert url == f"http://localhost:5001/{TEST_BUCKET}/{body['file']['s3_key']}"

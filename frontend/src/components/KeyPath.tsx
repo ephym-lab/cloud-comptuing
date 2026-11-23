@@ -7,7 +7,10 @@
  */
 
 export interface KeySegment {
+  /** What's drawn in the chip (may be shortened). */
   text: string;
+  /** The real key text when `text` is shortened; used for the accessible label. */
+  value?: string;
   /** "prefix" = part of the path, "variable" = differs per user, "object" = the file name. */
   kind?: "prefix" | "variable" | "object";
   /** Accessible / hover explanation, e.g. "your user ID". */
@@ -42,7 +45,7 @@ const chipStyles = {
 };
 
 export function KeyPath({ segments, size = "sm", surface = "paper", animate = false }: KeyPathProps) {
-  const fullKey = segments.map((s) => s.text).join("/");
+  const fullKey = segments.map((s) => s.value ?? s.text).join("/");
   const separator = surface === "ink" ? "text-paper/50" : "text-steel";
 
   return (
@@ -72,11 +75,15 @@ export function KeyPath({ segments, size = "sm", surface = "paper", animate = fa
 /** Segments for a key like users/<id>/videos/clip.mp4 */
 export function segmentsForKey(key: string, userId?: string): KeySegment[] {
   const parts = key.split("/");
-  return parts.map((text, index) => ({
-    text: userId && text === userId ? shortId(text) : text,
-    title: userId && text === userId ? `User ID ${text}` : undefined,
-    kind: index === parts.length - 1 ? "object" : text === userId ? "variable" : "prefix",
-  }));
+  return parts.map((text, index) => {
+    const isUserId = userId !== undefined && text === userId;
+    return {
+      text: isUserId ? shortId(text) : text,
+      value: text,
+      title: isUserId ? `User ID ${text}` : undefined,
+      kind: index === parts.length - 1 ? "object" : isUserId ? "variable" : "prefix",
+    };
+  });
 }
 
 export function shortId(id: string): string {

@@ -62,6 +62,8 @@ class BaseConfig:
     # --- AWS / S3 ---
     AWS_REGION = os.getenv("AWS_REGION", "")
     S3_BUCKET_NAME = os.getenv("S3_BUCKET_NAME", "")
+    # Leave empty for real AWS. Set only to use a local S3 emulator (e.g. moto_server).
+    S3_ENDPOINT_URL = os.getenv("S3_ENDPOINT_URL", "")
     PRESIGNED_URL_EXPIRY_SECONDS = _env_int("PRESIGNED_URL_EXPIRY_SECONDS", 60)
     PRESIGNED_POST_EXPIRY_SECONDS = 5 * 60
     SHARE_LINK_MAX_MINUTES = 60

@@ -18,6 +18,14 @@
   --color-ok: #1f7a4d;
   --color-ok-soft: #e3f2ea;
 
+  /* Storage chart: one hue per category, fixed order, validated for colour-blind
+     separation (dataviz validate_palette.js). Yellow is skipped: it means "expires". */
+  --color-cat-video: #2a78d6;
+  --color-cat-audio: #eb6834;
+  --color-cat-image: #1baf7a;
+  --color-cat-document: #6250d6;
+  --color-cat-other: #e87ba4;
+
   --font-sans: var(--font-schibsted), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-plex-mono), ui-monospace, "SFMono-Regular", monospace;
 
