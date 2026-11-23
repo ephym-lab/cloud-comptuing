@@ -40,6 +40,10 @@ class BaseConfig:
     JWT_ACCESS_COOKIE_PATH = "/api/"
     JWT_REFRESH_COOKIE_PATH = "/api/auth/refresh"
 
+    # --- One-time email tokens ---
+    VERIFY_EMAIL_TOKEN_TTL = timedelta(hours=24)
+    RESET_PASSWORD_TOKEN_TTL = timedelta(minutes=30)
+
     # --- Rate limiting ---
     RATELIMIT_STORAGE_URI = os.getenv("RATELIMIT_STORAGE_URI", "memory://")
     RATELIMIT_ENABLED = True

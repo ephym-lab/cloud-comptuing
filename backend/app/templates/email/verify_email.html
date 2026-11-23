@@ -1,0 +1,12 @@
+{% extends "email/_layout.html" %}
+{% block body %}
+<p>Hi {{ name }},</p>
+<p>Thanks for signing up. Please confirm your email address to start uploading files.</p>
+<p style="padding:8px 0;">
+  <a href="{{ link }}"
+     style="background:#e8711a;color:#ffffff;text-decoration:none;padding:12px 20px;border-radius:6px;display:inline-block;">
+    Verify email
+  </a>
+</p>
+<p>This link expires in {{ expires_in }}. If you didn't create an account, you can ignore this email.</p>
+{% endblock %}

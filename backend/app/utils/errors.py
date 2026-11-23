@@ -22,10 +22,19 @@ class AppError(Exception):
     status_code = 400
     code = "bad_request"
 
-    def __init__(self, message: str, details: dict[str, Any] | None = None) -> None:
+    def __init__(
+        self,
+        message: str,
+        details: dict[str, Any] | None = None,
+        code: str | None = None,
+    ) -> None:
+        """`code` optionally overrides the class default with a more specific
+        machine-readable code (e.g. "email_not_verified") the frontend can act on."""
         super().__init__(message)
         self.message = message
         self.details = details or {}
+        if code:
+            self.code = code
 
 
 class ValidationError(AppError):

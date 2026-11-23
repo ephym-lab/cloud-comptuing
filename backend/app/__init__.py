@@ -2,26 +2,33 @@
 
 import logging
 import os
+from typing import Any
 
 from flask import Flask
 
 from app.config import CONFIGS, BaseConfig
 from app.extensions import db, jwt, limiter, migrate
+from app.routes.auth_routes import auth_bp
 from app.routes.health_routes import health_bp
+from app.services.email_service import init_email
 from app.utils.errors import register_error_handlers
 
 
-def create_app(config_name: str | None = None) -> Flask:
+def create_app(
+    config_name: str | None = None, config_overrides: dict[str, Any] | None = None
+) -> Flask:
     """Build and configure a Flask app.
 
     `config_name` is one of "development", "production", "testing".
     Defaults to the FLASK_ENV environment variable, then "development".
+    `config_overrides` lets tests tweak individual settings.
     """
     config_name = config_name or os.getenv("FLASK_ENV", "development")
     config_class = CONFIGS[config_name]
 
     app = Flask(__name__)
     app.config.from_object(config_class)
+    app.config.update(config_overrides or {})
     _check_required_settings(app, config_class)
     _configure_logging(app)
 
@@ -29,9 +36,11 @@ def create_app(config_name: str | None = None) -> Flask:
     migrate.init_app(app, db)
     jwt.init_app(app)
     limiter.init_app(app)
+    init_email(app)
 
     register_error_handlers(app)
     app.register_blueprint(health_bp)
+    app.register_blueprint(auth_bp)
 
     # Import models so Flask-Migrate can see them when generating migrations.
     from app import models  # noqa: F401
